@@ -4,10 +4,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build -> C64 -> TEST",
+            "label": "build -> sound2",
             "type": "shell",
             "osx": {
-                "command": "sh make_pkg_sound2.sh",
+                "command": "bin/mac/acme  -f cbm  -o build/sound2.bin sound2/_sound2_pkg.asm",
+            },
+            "windows": {
+                "command": "bin\\win\\acme -f cbm  -o build/sound2.bin sound2/_sound2_pkg.asm"
+            },
+            "linux": {
+                "command": "bin/linux/acme -f cbm  -o build/sound2.bin sound2/_sound2_pkg.asm"
             },
             "group": {
                 "kind": "build",

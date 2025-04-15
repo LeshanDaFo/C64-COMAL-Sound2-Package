@@ -12,6 +12,7 @@
 
 start   =   $8009
 
+    !source "sound2/soundsymb.asm"
     !source "c64symb.asm"
 
 *= start
