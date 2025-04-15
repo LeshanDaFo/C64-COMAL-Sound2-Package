@@ -1,0 +1,29 @@
+Information:
+
+Der user OMEGA aus dem Forum64 hat einen Fehler in dem Sound-Befehl von COMAL80 entdeckt.
+
+Es existiert dort eine Funktion: 'setscore' mit der man Tabellen für die zu spielenden Töne übergeben kann.
+Der Aufruf der Prozedur ist folgender: setscore(stimme,frequenz#(),ads'dauer#(),r'dauer#())
+
+Hier dazu die Beschreibung aus dem Handbuch "COMAL 2.01 HANDBUCH für Commodore 64"
+
+  Setscore ist eine Prozedur, die den Klangbaustein vorbereitet, eine Melodie zu spielen. Die Töne müssen in einer Frequenztabelle 'frequenz#()' vorliegen.
+  Die Dauer aller Töne (Anstiegszeit+Abschwellzeit+Haltezeit) muß in der Tabelle 'ads'dauer#()' stehen,
+  während die Tabelle 'r'dauer#()' die Zeitspannen 'Ausklingzeit+Zeit zwischen den Tönen' enthält.
+  Diese Tabellen muß der Programmierer also vorher erstellen, sie können-als DATA-Zeilen im Programm selbst oder als Datei auf einem Datenträger gespeichert sein.
+
+Diese Prozedur nimmt nun die übergebenen Werte, und speichert sie in interne Register, damit stehen sie zur weiteren Bearbeitung der Prozedur 'playscore' zur Verfügung.
+
+Aber anders als erwartet nimmt 'playscore lediglich die Frequenzen, und beschreibt damit die entsprechenden Register im SID.
+Die zuvor von 'setscore' übergebenen Werte für ADSR werden aber lediglich als Timer in der Interrupt-Routine verwendet.
+
+Die Abfolge ist dabei folgende:
+
+  Frequnz in das SID-Register laden
+  Ton starten
+  Warten bist Timer 'ADS' abgelaufen ist
+  Ton stoppen
+  Warten bis Timer 'R" abgelaufen ist
+  Nächster Ton falls vorhanden
+
+Die Aufgabe ist nun, dieses Manko auszubessern.
