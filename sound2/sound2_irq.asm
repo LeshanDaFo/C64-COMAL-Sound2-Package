@@ -11,13 +11,13 @@
 
 
 .lBB5B
-    LDA #$02                    ; zählt die Oszillatoren (2..0)
+    LDA #$02                    ; zählt die Oszillatoren 3..1 (als 2..0)
     STA INF1
     LDA #$0E
-    STA INF2                    ; enthält die Frequenz-Register (zuerst von Osz2: Offset 14)
+    STA INF2                    ; enthält die Frequenz-Register (zuerst von Oszi 3: Offset 14)
 
 .lBB63  ;           (MAINLOOP)
-    LDX INF1                    ; zuerst: Osz2 (in .x)
+    LDX INF1                    ; zuerst: Oszi 3 (in .x)
     LDA $C308,X                 ; liegt ein Ton für diesen Oszi vor? (holt Flag: 2, 1 oder 0)
     BNE .lBB6D                  ; ja, noch nicht bearbeitet oder noch nicht abgelaufen? (2 oder 1?)
     JMP .lBC28                  ; nein, Ton abgelaufen oder nicht gesetzt (0), nächsten Oszi ansteuern
@@ -182,11 +182,11 @@
 .irq1
 .lB96F
     STA $D019
-    LDA $D01E
+    LDA $D01E       ; collision s-s
     STA $C268
     ORA $C26C
     STA $C26C
-    LDA $D01F
+    LDA $D01F       ; collision s-b
     STA $C269
     ORA $C26E
     STA $C26E
@@ -224,11 +224,11 @@
 
 ; sound part handling
 .lB9B6
-    LDA $C308
+    LDA $C308       ; any sound to play?
     ORA $C309
     ORA $C30A
-    BEQ .lB9C4
-    JMP .lBC44                  ; jump to sound IRQ
+    BEQ .lB9C4      ; no
+    JMP .lBC44      ; yes, jump to sound IRQ
 ---------------------------------
 .lB9C4
     RTS
