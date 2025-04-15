@@ -1,0 +1,331 @@
+; #######################################################################
+; #                                                                     #
+; #  C64 COMAL80 PACKAGE SOUND2                                         #
+; #  Version 1.0 (2025.04.12)                                           #
+; #  Copyright (c) 2025 Claus Schlereth                                 #
+; #                                                                     #
+; #  This version of the source code is under MIT License               #
+; #  https://github.com/LeshanDaFo/C64-COMAL-Packages/blob/main/LICENSE #
+; #                                                                     #
+; #######################################################################
+
+;------------------------------
+;note(stimme, code$)
+;------------------------------  
+        ;ist eine Prozedur, die den Tongenerator mit der Nummer 'stimme' (1, 2 oder 3) darauf
+        ;vorbereitet, die angegebene Note 'code$' zu spielen. 'code' kann Werte von "c0#",
+        ;"d0", "d0#",....,"a7#" annehmen, wobei der Buchstabe die Note und die Ziffer die
+        ;Oktave kennzeichnet. Das Zeichen '#' steht für eine halbe Note.
+
+        ;Beispiel:
+        ;Note(2, "a4") Stimme 2 wird zum Spielen der Note "a4"
+        ;(440 Hz) vorbereitet.
+
+    ;Es werden keien Variablen benutzt.
+    ;Die Register ($D400,$D407,$D40E) und ($D401,D408,$D40F) werden direkt beschrieben 
+
+
+;------------------------------ 
+;pulse(stimme,impulsbreite)
+;------------------------------ 
+        ;ist eine Prozedur, die das Tastverhältnis (duty-cycle) der Rechteckschwingung
+        ;einstellt, d.h. das Verhältnis der Zeit, während der das Signal '1' ist, zur
+        ;Gesamtschwingungsdauer. Die Zahl 'impulsbreite' kann Werte von 0 bis 4095
+        ;annehmen. Zwischen dem Tastverhältnis in Prozent und der Zahl 'impulsbreite'
+        ;besteht der Zusammenhang:
+        ;Tastverhältnis=impulsbreite/40.95 .
+        ;Für impulsbreite=2048 ergibt sich ein Tastverhältnis von 50%, d.h. Hoch- und
+        ;Tiefphase der Rechteckschwingung sind gleich lang.
+        ;Der Obertonanteil und damit der Klang des Tons wird durch das Tastverhältnis
+        ;entscheidend beeinflußt: je kürzer die Impulse sind, desto mehr klingt der Ton nasal
+        ;und schrill. Ändert man das Tastverhältnis während des Spielens, so entsteht ein
+        ;sogenannter "phasing-Effekt”.
+
+        ;Beispiele:
+        ;pulse(1,2048)  setzt das Tastverhältnis für die 1. Stimme auf 50%.
+        ;pulse(3,410)   setzt das Tastverhältnis für Stimme 3 auf 10%.
+
+    ;Es werden keien Variablen benutzt.
+    ;Die Register ($D402,$D409,$D410) und ($D403,$D40A,$D411) werden direkt beschrieben 
+
+
+;------------------------------ 
+;gate(stimme,ein'aus)
+;------------------------------ 
+        ;ist eine Prozedur, die den Hüllkurvengenerator steuert:
+        ;gate(stimme,1) startet den Zyklus attack/decay/sustain.
+        ;gate(stimme,2) leitet die 'release'
+        ;-Phase (Ausklingphase) ein.
+        ;d.h. solange 'ein'aus'=1 ist, wird der Ton mit dem in der Prozedur 'adsr' eingestellten
+        ;Lautstärkepegel (sustain) gespielt. Wird 'ein'aus'=0, so klingt der Ton mit der in der
+        ;Prozedur 'adsr' festgelegten Ausklingzeit ab. Ändert sich der Wert von 'ein'aus', bevor
+        ;die jeweilige adsr-Phase beendet ist, so beginnt die neue adsr-Phase beim
+        ;derzeitigen Lautstärke-Pegel.
+
+    ;Beeinflusst die Variable ($C300,$C301,$C302)
+    ;Der wert dieser Variable wird in die Register ($D404,$D40B,$D412) geschrieben.
+
+
+;------------------------------ 
+;soundtyp(stimme,schwingungsform)
+;------------------------------ 
+        ;ist eine Prozedur, die die Schwingungsform einer Stimme mit der Nummer 'stimme'
+        ;einstellt. Die Ziffer 'schwingungsform' hat folgende Bedeutung:
+
+        ;0: Stille
+
+        ;1: Dreiecksschwingung
+        ;Diese Kurvenform ist arm an Obertönen und hat einen weichen, einer Flöte
+        ;ähnlichen Charakter.
+
+        ;2: Sägezahnschwingung
+        ;Diese Kurvenform ist reich an geraden und ungeraden Obertönen und ergibt
+        ;einen breiten, an Blechbläser erinnernden Klang.
+
+        ;3: Rechteckschwingung
+        ;Der Obertonanteil dieser Schwingungsform ist abhängig vom Tastverhältnis
+        ;(siehe pulse).
+
+        ;4. Weißes Rauschen
+        ;Der Klang reicht je nach Frequenz vom Rumpeln bis zum scharfen Zischen.
+        ;Rauschen wird z.B. benötigt, um Geräusche wie Donner oder Wind nachzubilden.
+
+    ;Beeinflusst die Variable ($C300,$C301,$C302)
+    ;Der Wert dieser Variable wird in die Register ($D404,$D40B,$D412) geschrieben.
+
+
+;------------------------------ 
+;ringmod(stimmenkombination,ja'nein)
+;------------------------------ 
+        ;ist eine Prozedur, die eine Ringmodulation der angegebenen 'stimmenkombination'
+        ;bewirkt (siehe sync), falls ja'nein=1 gesetzt ist. Dabei wird die Dreiecksschwingung
+        ;durch das ringmodulierte Signal der Stimmenkombination ersetzt. Es entstehen dabei
+        ;Summen- und Differenzfrequenzen der Stimmenkombination.
+
+    ;Beeinflusst die Variable ($C300,$C301,$C302)
+    ;Der Wert dieser Variable wird in die Register ($D404,$D40B,$D412) geschrieben.
+
+
+;------------------------------
+;sync(stimmenkombination,ja'nein)
+;------------------------------
+        ;ist eine Prozedur, die für die Synchronisation der angegebenen Stimmenkombination
+        ;sorgt, falls ja'nein=1 ist. Für 'stimmenkombination' sind die Ziffern 1, 2 oder 3 einzusetzen:
+
+        ;sync(1,1) synchronisiert die Stimmen 1 und 3
+        ;sync(2,1) synchronisiert die Stimmen 1 und 2
+        ;sync(3,1) synchronisiert die Stimmen 2 und 3
+
+    ;Beeinflusst die Variable ($C300,$C301,$C302)
+    ;Der Wert dieser Variable wird in die Register ($D404,$D40B,$D412) geschrieben.
+
+
+;------------------------------
+;adsr(stimme,attack,decay,sustain,release)
+;------------------------------
+        ;ist eine Prozedur, die die Form der Einhüllenden der entsprechenden Schwingung
+        ;und damit die Dynamik der Lautstärke eines Tons bestimmt.
+        ;Die Parameter attack,decay,sustain und release können Werte von 0 bis 15 annehmen. Für
+        ;die Zuordnung der Parameter zu den Anstiegs- bzw. Abschwell- und Ausklingzeiten gilt die
+        ;nachfolgende Tabelle, Beachten Sie, daß 'sustain' einen Lautstärke pegel bezeichnet. Die
+        ;zugehörige Haltezeit des Tones muß z.B. durch eine Verzögerungsschleife selbst
+        ;programmiert werden.
+
+        ;Beispiel:
+        ;adsr(1,8,4,12,19) stellt die Hüllkurve für Stimme 1 folgendermaßen ein:
+        ;Anstiegszeit: 2 msec
+        ;Abschwellzeit: 114 msec
+        ;Lautstärkepegel: 12 (80%)
+        ;Ausklingzeit: 1.5 sec
+    
+    ;Es werden keien Variablen benutzt.
+    ;Die Register ($D405,$D40C,$D413) und ($D406,$D40D,$D414) werden direkt beschrieben
+
+
+;------------------------------
+;filterfreq(frequenzwert)
+;------------------------------
+        ;ist eine Prozedur, die die Eck- bzw. Mittenfrequenz des mit 'filtertyp' eingestellten
+        ;Filters festlegt. Den Zahlen von 0 bis 2047 Für "frequenzwert' sind Frequenzen von
+        ;ca. 30Hz bis 12000Hz zugeordnet.
+    
+    ;Es werden keien Variablen benutzt.
+    ;Die Register $D415 und $D416 werden direkt beschrieben.
+
+
+;------------------------------
+;resonance(grad)
+;------------------------------
+        ;ist eine Prozedur, die den Grad der Hervorhebung der Frequenzen in der Nähe der
+        ;mit 'filterfreq' eingestellten Eck- bzw. Mittenfrequenz bestimmt. Für 'grad' gelten
+        ;Zahlen von 0 bis 15.
+    
+    ;Beeinflusst die Variable $C303, bit 4-7
+    ;Der Wert dieser Variable wird in das Register $D417 geschrieben.
+
+
+;------------------------------
+;filter(stimme1,stimme2,stimne3,extern'ein)
+;------------------------------
+        ;ist eine Prozedur, die bestimmt, welche der Stimmen gefiltert werden. Eine '1' anstelle
+        ;von 'stimmex' bedeutet, daß die entsprechende Stimme gefiltert wird.
+
+        ;Beispiele:
+        ;Filter(1,0,0,0)    Nur Stimme 1 wird gefiltert.
+        ;Filter(0,1,0,1)    Stimme 2 und ein am externen Eingang
+        ;                   anliegendes Tonsignal werden gefiltert.
+
+    ;Beeinflusst die Variable $C303, bit 0-3
+    ;Der Wert dieser Variable wird in das Register $D417 geschrieben.
+
+
+;------------------------------
+;filtertype(tiefpaß,bandpaß,hochpaß,3'aus)
+;------------------------------
+        ;ist eine Prozedur, die den Filtertyp einstellt:
+        
+        ;tiefpaß=1 schaltet ein Tiefpaß-Filter ein. Alle Töne mit Frequenzen unterhalb der
+        ;Eckfrequenz bleiben unverändert, während Töne oberhalb der Eckfrequenz mit
+        ;12dB/Oktave geschwächt werden. Es entstehen volle Klänge.
+        
+        ;bandpaß=1 schaltet entsprechend ein Bandpaß-Filter ein. Frequenzen ober- und
+        ;unterhalb der Mittenfrequenz werden mit 5dB/Oktave abgeschwächt. Es entstehen
+        ;offene dünne Tone.
+        
+        ;hochpaß=1 schaltet ein Hochpaß-Filter ein, Frequenzen unterhalb der Eckfrequenz
+        ;werden mit 12dB/Oktave abgeschwächt, Es entstehen dadurch blecherne Klange.
+        ;3'aus=1 schaltet die Stimme 3 nicht auf den Ausgang. Stimme 3 kann dann z.B. zur
+        
+        ;Ringmodulation benutzt werden.
+        ;Es können auch mehrere Filtertypen gleichzeitig eingeschaltet sein:
+        
+        ;filtertyp(1,0,1,0) ergibt ein 'Notch-Filter', das nur Frequenzen in der
+        ;Nähe der Mittenfrequenz dämpft.
+    
+    ;Beeinflusst die Variable $C304, bit 4-7
+    ;Der Wert dieser Variable wird in das Register $D418 geschrieben.
+
+
+;------------------------------
+;volume(pegel)
+;------------------------------
+        ;ist eine Prozedur, die die Gesamtlautstarke (Summe aller Stimmen) einstellt. Der
+        ;Parameter 'pegel' kann Werte von 0 bis 15 (still bis laut) annehmen.
+
+        ;volume(15) stellt die Maximallautstärke ein.
+    
+    ;Beeinflusst die Variable $C304, bit 0-3
+    ;Der Wert dieser Variable wird in das Register $D418 geschrieben.
+
+
+;------------------------------
+;env3
+;------------------------------
+        ;ist eine Funktion, die die momentane Auslenkung des Hüllkurvengenerators von
+        ;Stimme 3 zurückliefert. Die Funktion liefert Werte von 0 bis 255.
+        ;Man erhält dynamische Hüllkurven, wenn man diese Werte z.B. zum 'frequenzwert'
+        ;der Prozedur 'filterfreq' hinzuaddiert.
+
+    ;gibt ur Werte aus Register $D41C aus
+
+
+;------------------------------
+;osc3
+;------------------------------
+        ;ist eine Funktion, die die momentane Auslenkung der Schwingung des Tongenerators
+        ;der 3. Stimme liefert. Die Werte reichen von 0 bis 255 und geben somit die eingestellte
+        ;Schwingungsform wieder. Bei der Dreiecksschwingung steigen die Werte
+        ;gleichmäßig von 0 bis 255 und fallen dann ebenfalls gleichmäßig auf Null. Ist für die
+        ;3. Stimme der Sägezahngenerator eingestellt, so steigen die Werte von osc3 von 0
+        ;bis 255, um dann sofort wieder auf 0 zu fallen. Bei eingestellter Rechteckschwingung
+        ;ergeben sich nur Serien von 0 und 255.
+        ;Addiert man die Werte von osc3 zu den Frequenzwerten anderer Stimmen, so erhält
+        ;man neue dynamische Effekte (z.B. Vibrato).
+
+    ;gibt nur Werte aus Register $D41B aus
+
+
+;------------------------------
+;frequency(code$)
+;------------------------------
+        ;ist eine Funktion, die den Frequenzwert für den SID- Baustein berechnet, wenn man
+        ;für code$ den zugehörigen Notencode einsetzt. Die Frequenzwerte liegen zwischen
+        ;-32768 und 32767. Sehr nützlich ist diese Funktion, um Frequenz-Tabellen für die
+        ;Prozedur 'setscore' zu berechnen. Für Noten bis einschließlich "a6#" ergeben sich
+        ;positive Zahlenwerte. Die unten als Beispiel angegebene Funktion 'frequenzwert'
+        ;berechnet die Frequenzwerte für alle Noten bis "a7#",
+
+        ;Beispiele:
+        ;PRINT frequency("a4")  druckt den Wert 7493. Mit
+        ;                       setfrequency(1,7493) könnte man die 1.
+        ;                       Stimme zum Spielen der Note a4 vorbereiten.
+
+    ;gibt nur einen Integer Wert aus
+
+
+;------------------------------
+;setscore(stimme,frequenz#(),ads'dauer#(),r'dauer#())
+;------------------------------
+        ;ist eine Prozedur, die den Klangbaustein vorbereitet, eine Melodie zu spielen. Die
+        ;Töne müssen in einer Frequenztabelle 'frequenz#()' vorliegen. Die Dauer aller Töne
+        ;(Anstiegszeit+Abschwellzeit+Haltezeit) muß in der Tabelle 'ads'dauer#()' stehen,
+        ;während die Tabelle 'r'dauer#()' die Zeitspannen 'Ausklingzeit+Zeit zwischen den
+        ;Tönen' enthält. Diese Tabellen muß der Programmierer also vorher erstellen, sie
+        ;können-als DATA-Zeilen im Programm selbst oder als Datei auf einem Datenträger
+        ;gespeichert sein.
+
+    ; Folgende Variablen sind betroffen:    $c308 - $c31E
+    ; Hinweis:  die Werte welche in ads und r übergeben wurden,
+    ;           werden lediglich als Timer genutzt
+
+
+;------------------------------
+;playscore(stimme1,stimme2,stimme3)
+;------------------------------
+        ;ist eine Prozedur, die für den gleichzeitigen Spielbeginn der Stimmen sorgt,
+        ;wenn in der entsprechenden Variablenposition 'stimmex' eine 1 steht.
+
+        ;Beispiel:
+        ;playscore(1,1,0) startet die Stimmen 1 und 2.
+
+    ; Folgende Variablen sind betroffen:    $c300 - $c324
+
+
+;------------------------------
+;stopplay(stimme1,stimme1,stimme3)
+;------------------------------
+        ;ist eine Prozedur, die das Spiel der entsprechenden Stimmen stoppt, falls stimmex=1 ist.
+
+        ;Beispiel:
+        ;stopplay(1,1,0 stoppt die Stimmen 1 und 2.
+
+    ;Beeinflusst die Variable $C300,$C301,$C303 ($D404,$D40B,$D412)
+    ;und $C308,$C309,$C30A , als Signal für Interrupt
+
+
+;------------------------------
+;waitscore(stimme1‚stinme2, stimme3)
+;------------------------------
+        ;ist eine Funktion, die nur dann den Wert TRUE (1) liefert, wenn die gekennzeichneten
+        ;Stimmen ihr Spiel beendet haben.
+
+        ;Beispiel:
+        ;WHILE NOT waitscore(1,1,0) DO NULL
+        ;wartet, bis die Stimmen 1 und 2 ihr Spiel beendet haben.
+
+    ; prüft die Variablen $c308,$c309,c30a
+
+
+;------------------------------   
+;setfrequency(stimme,frequenzwert)
+;------------------------------  
+        ;ist eine Prozedur, die den Tongenerator mit der Nummer 'stimme' darauf vorbereitet,
+        ;einen Ton einer bestimmten Frequenz zu spielen. 'frequenzwert' muß eine ganze Zahl
+        ;zwischen 0 und 65535 sein. Sie stellt nicht die Frequenz (gemessen in Hertz) dar,
+        ;sondern es gilt die Umrechnung:    Frequenzwert=hz*17.0295455.
+
+        ;Beispiel:
+        ;setfrequency(2,440*17.0295455) stellt Stimme 2 auf 440 Hz ein.
+
+    ;Es werden keien Variablen benutzt.
+    ;Die Register ($D400,$D407,$D40E) und ($D401,D408,$D40F) werden direkt beschrieben 

@@ -1,0 +1,64 @@
+; #######################################################################
+; #                                                                     #
+; #  C64 COMAL80 PACKAGE SOUND2                                         #
+; #  Version 1.0 (2025.04.12)                                           #
+; #  Copyright (c) 2025 Claus Schlereth                                 #
+; #                                                                     #
+; #  This version of the source code is under MIT License               #
+; #  https://github.com/LeshanDaFo/C64-COMAL-Packages/blob/main/LICENSE #
+; #                                                                     #
+; #######################################################################
+
+; $c300     Register $D404
+; $c301     Register $D40B
+; $c302     Register $D412
+
+; $c303     Filter resonance bit 4-7, filter voice 0-3 bit 0-3 (Register $D417)
+; $c304     Filter mod bit 4-7, volume control bit 0-3 (Register $D418)
+
+; Diese Speicherstellen können nicht benutzt werden
+; $c305     in gebrauch von anderen Routinen
+; $c306     in gebrauch von anderen Routinen
+; $c307     in gebrauch von anderen Routinen
+
+; Interrupt Flags
+; $c308     Stimme 1
+; $c309     Stimme 2
+; $c30a     Stimme 3
+
+; Frequenz Tabellenzeiger
+; $c30b     Stimme 1 low byte
+; $c30c     Stimme 2 low byte
+; $c30d     Stimme 3 low byte
+; $c30e     Stimme 1 high byte
+; $c30f     Stimme 2 high byte
+; $c310     Stimme 3 high byte
+
+; ADS Tabellenzeiger
+; $c311     Stimme 1 low byte
+; $c312     Stimme 2 low byte
+; $c313     Stimme 3 low byte
+; $c314     Stimme 1 high byte
+; $c315     Stimme 2 high byte
+; $c316     Stimme 3 high byte
+
+; R Tabellenzeiger
+; $c317     Stimme 1 low byte
+; $c318     Stimme 2 low byte
+; $c319     Stimme 3 low byte
+; $c31a     Stimme 1 high byte
+; $c31b     Stimme 2 high byte
+; $c31c     Stimme 3 high byte
+
+; $c31d     zur Berechnung Tabellenzeiger
+; $c31e     zur Berechnung Tabellenzeiger
+
+; Interrupt 16bit Zähler
+; $c31f     Stimme 1 low byte
+; #c320     Stimme 2 low byte
+; #c321     Stimme 3 low byte
+; #c322     Stimme 1 high byte
+; $c323     Stimme 2 high byte
+; $c324     Stimme 3 high byte
+
+; Die weiteren Speicherzellen werden von anderen Prozeduren, und vom System benutzt.

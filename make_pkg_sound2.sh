@@ -1,0 +1,1 @@
+bin/mac/acme -f cbm  -o build/sound2.bin sound2/_sound2_pkg.asm
