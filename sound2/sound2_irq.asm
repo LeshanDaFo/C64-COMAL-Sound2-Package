@@ -129,7 +129,6 @@
     SEC
     LDA $C31F,X
     SBC #$01        ; Tondauerzähler minus 1
-    INC $D020
     STA $C31F,X
     BCS .lBC28
     DEC $C322,X
