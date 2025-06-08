@@ -1,13 +1,13 @@
-; #######################################################################
-; #                                                                     #
-; #  C64 COMAL80 PACKAGE SOUND2                                         #
-; #  Version 1.0 (2025.04.12)                                           #
-; #  Copyright (c) 2025 Claus Schlereth                                 #
-; #                                                                     #
-; #  This version of the source code is under MIT License               #
-; #  https://github.com/LeshanDaFo/C64-COMAL-Packages/blob/main/LICENSE #
-; #                                                                     #
-; #######################################################################
+; ###############################################################################
+; #                                                                             #
+; #  C64 COMAL80 PACKAGE SOUND2                                                 #
+; #  Version 1.0 (2025.04.12)                                                   #
+; #  Copyright (c) 2025 Claus Schlereth                                         #
+; #                                                                             #
+; #  This version of the source code is under MIT License                       #
+; #  https://github.com/LeshanDaFo/C64-COMAL-Sound2-Package/blob/main/LICENSE   #
+; #                                                                             #
+; ###############################################################################
 
 ; Sound
 ptSound
